@@ -1,6 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: eks-gitops-deployment
   name: msa-db
   labels:
     app: msa-db
@@ -32,7 +33,7 @@ spec:
         hostPath:
           path: /data/mysql
           type: DirectoryOrCreate
-#        volumeMounts:
+#        volumeMounts: # PV, PVC 연결시 사용(시간문제로 실습에서는 안 씁니다.)
 #        - name: mysql-persistent-storage
 #          mountPath: /var/lib/mysql
 #  volumeClaimTemplates:
@@ -48,6 +49,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: eks-gitops-deployment
   name: msa-db-headless
   labels:
     app: msa-db
@@ -62,6 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: eks-gitops-deployment
   name: msa-db-service
   labels:
     app: msa-db

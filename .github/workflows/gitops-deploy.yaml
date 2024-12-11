@@ -32,18 +32,24 @@ jobs:
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --region ap-northeast-2 --name hana111Cluster
-    # 5. DB 배포
+
+    # 5. Namespace 생성 배포
+    - name: Deploy Database
+      run: |
+        kubectl apply -f msa_namespace.yaml
+
+    # 6. DB 배포
     - name: Deploy Database
       run: |
         kubectl apply -f msa_db.yaml
 
-    # 6. 서비스 배포
+    # 7. 서비스 배포
     - name: Deploy Services
       run: |
         kubectl apply -f msa_main.yaml,msa_review.yaml,msa_user.yaml
     #   kubectl apply -f msa_*.yaml로 대체 가능
 
-    # 7. 게이트웨이 배포
+    # 8. 게이트웨이 배포
     - name: Deploy Gateway
       run: |
         kubectl apply -f msa_controller.yaml

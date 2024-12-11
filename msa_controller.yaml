@@ -1,23 +1,17 @@
-# Step 1: Namespace 생성 (Ingress Controller 배포용)
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress-nginx
-
----
-# Step 2: ServiceAccount 생성
+# Step 1: ServiceAccount 생성
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: ingress-nginx
-  namespace: ingress-nginx
+  namespace: eks-gitops-deployment
 
 ---
-# Step 3: ClusterRole 생성
+# Step 2: ClusterRole 생성
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: ingress-nginx
+  namespace: eks-gitops-deployment
 rules:
 - apiGroups: ["discovery.k8s.io"]
   resources: ["endpointslices"]
@@ -89,11 +83,12 @@ rules:
   - watch
 
 ---
-# Step 4: ClusterRoleBinding 생성
+# Step 3: ClusterRoleBinding 생성
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: ingress-nginx
+  namespace: eks-gitops-deployment 
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -104,21 +99,22 @@ subjects:
   namespace: ingress-nginx
 
 ---
-# Step 5: IngressClass 생성
+# Step 4: IngressClass 생성
 apiVersion: networking.k8s.io/v1
 kind: IngressClass
 metadata:
   name: nginx
+  namespace: eks-gitops-deployment
 spec:
   controller: k8s.io/ingress-nginx
 
 ---
-# Step 6: NGINX Ingress Controller Deployment
+# Step 5: NGINX Ingress Controller Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ingress-nginx-controller
-  namespace: ingress-nginx
+  namespace: eks-gitops-deployment
   labels:
     app: ingress-nginx
 spec:
@@ -157,12 +153,12 @@ spec:
               fieldPath: metadata.namespace
 
 ---
-# Step 7: NGINX Ingress Controller Service
+# Step 6: NGINX Ingress Controller Service
 apiVersion: v1
 kind: Service
 metadata:
   name: ingress-nginx-controller
-  namespace: ingress-nginx
+  namespace: eks-gitops-deployment
   labels:
     app: ingress-nginx
 spec:
@@ -180,12 +176,12 @@ spec:
     app: ingress-nginx
 
 ---
-# Step 8: Ingress 리소스 정의
+# Step 7: Ingress 리소스 정의
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: msa-ingress
-  namespace: default
+  namespace: eks-gitops-deployment
   annotations:
     nginx.ingress.kubernetes.io/enable-access-log: "true" # kubectl logs -n ingress-nginx -l app=ingress-nginx 로 로그 조회
 spec:

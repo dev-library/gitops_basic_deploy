@@ -1,0 +1,49 @@
+name: Deploy to EKS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # Self-Hosted Runner 사용
+
+    steps:
+    # 1. 코드 체크아웃
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. AWS CLI 설정
+    - name: Configure AWS CLI
+      run: |
+        aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws configure set region ap-northeast-2
+
+    # 3. kubectl 설정
+    - name: Install kubectl
+      run: |
+        curl -LO "https://dl.k8s.io/release/v1.27.3/bin/linux/amd64/kubectl"
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/kubectl
+
+    # 4. kubeconfig 설정
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ap-northeast-2 --name hana111Cluster
+    # 5. DB 배포
+    - name: Deploy Database
+      run: |
+        kubectl apply -f msa_db.yaml
+
+    # 6. 서비스 배포
+    - name: Deploy Services
+      run: |
+        kubectl apply -f msa_main.yaml,msa_review.yaml,msa_user.yaml
+    #   kubectl apply -f msa_*.yaml로 대체 가능
+
+    # 7. 게이트웨이 배포
+    - name: Deploy Gateway
+      run: |
+        kubectl apply -f msa_controller.yaml

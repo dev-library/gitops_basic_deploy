@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: eks-gitops-deployment
+  namespace: eks-basic-deployment
   name: msa-user
   labels:
     app: msa-user
@@ -33,7 +33,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: eks-gitops-deployment
+  namespace: eks-basic-deployment
   name: msa-user-service
   labels:
     app: msa-user
@@ -43,5 +43,5 @@ spec:
     app: msa-user
   ports:
   - protocol: TCP
-    port: 8080
+    port: 80
     targetPort: 8080

@@ -2,4 +2,4 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: eks-gitops-deployment
+  name: eks-basic-deployment

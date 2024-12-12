@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  namespace: eks-gitops-deployment
+  namespace: eks-basic-deployment
   name: msa-db
   labels:
     app: msa-db
@@ -49,7 +49,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: eks-gitops-deployment
+  namespace: eks-basic-deployment
   name: msa-db-headless
   labels:
     app: msa-db
@@ -64,7 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: eks-gitops-deployment
+  namespace: eks-basic-deployment
   name: msa-db-service
   labels:
     app: msa-db
